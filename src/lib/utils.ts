@@ -48,7 +48,7 @@ export async function getFriends(user: UserType) {
     })
   ) ;
 
-  const mutualFriends = friends.filter((friend) => friend.friends.includes(user._id)) ;
+  const mutualFriends = friends.filter((friend) => friend?.friends.includes(user._id)) ;
     
   return mutualFriends ;
 }
