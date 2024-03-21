@@ -7,7 +7,7 @@ import { getServerSession } from "next-auth";
 const PeopleList = async () => {
   const users: Array<UserType> = await getUsers() ;
   const session = await getServerSession(options) ;
-  const user = await findUser(session.user.email) ;
+  const user = await findUser(session.user.email) as UserType ;
   const filteredUsers = users.filter(userFilter => userFilter._id !== String(user._id)) ;
   const usersTSX = filteredUsers.map(user => {
     return (

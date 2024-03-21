@@ -15,11 +15,25 @@ export async function POST(req: NextRequest, { params }: { params: { user: strin
   try {
     const json = await req.json() ;
     const user = await User.findOne({ _id: params.user }) ;
+
+    if (!user) return NextResponse.json({ error: "User not found" }) ;
     
     switch (json.action.type) {
       case 'add_new_friend':
         if (user.friends.includes(json.id)) return NextResponse.json({ user }) ;
         user.friends.push(json.id) ;
+
+        await user.save() ;
+
+        return NextResponse.json({ user }) ;
+      case 'add_likes':
+        user.likedNumber++ ;
+
+        await user.save() ;
+
+        return NextResponse.json({ user }) ;
+      case 'remove_likes':
+        user.likedNumber-- ;
 
         await user.save() ;
 
