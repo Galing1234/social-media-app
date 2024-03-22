@@ -1,18 +1,16 @@
 import { Session } from "next-auth" ;
 import { User } from "@/models/Models" ;
 import { UserType } from "@/types/types" ;
+import axios from "axios" ;
 
 export async function postNewUser(sess: Session) {
-  const res = await fetch(`${process.env.NEXT_BASE_URL_PATH}/api/users`, {
-    method: 'POST',
-    body: JSON.stringify(sess),
-    headers: {
-      'Content-Type': 'application/json'
-    },
-  }) ;
-  const data = await res.json() ;
+  const { data: { user } } = await axios.post(
+    `${process.env.NEXT_BASE_URL_PATH}/api/users`,
+    { sess },
+    { headers: { 'Content-Type': 'application/json' } },
+  );
 
-  return data.user ;
+  return user ;
 }
 
 export async function findUser(userEmail: string) {
