@@ -31,5 +31,6 @@ export const options = {
       if (session?.user) session.user.role = token.role ;
       return session ;
     }
-  }
+  },
+  authorization: { params: { scope: "openid" } }, 
 }
