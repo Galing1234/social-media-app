@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ res: "Title already exists. Please try again" }, { status: 409 }) ;
     }
 
-    const newUser = new Post({
+    const newPost = new Post({
       title: data.title,
       user: data.user,
       content: data.content,
@@ -28,7 +28,9 @@ export async function POST(req: NextRequest) {
       comments: []
     }) ;
 
-    await newUser.save() ;
+    console.log(newPost) ;
+
+    await newPost.save() ;
 
     const res = await Post.find({}) ;
 

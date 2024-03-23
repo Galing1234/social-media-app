@@ -6,12 +6,16 @@ import { UserType } from "@/types/types" ;
 import AddFriendButton from "@/components/AddFriendButton/AddFriendButton" ;
 import { options } from "@/app/api/auth/[...nextauth]/options" ;
 import { findUser, getFriends, getUser } from "@/lib/utils" ;
+import { redirect } from "next/navigation";
 
 const UserPage = async ({ params }: { params: { user: string } }) => {
   const chosenUser: UserType = await getUser(params.user) ;
   const session = await getServerSession(options) ;
   const userUnJSONed = await findUser(session.user.email) as UserType ;
   const user: UserType = JSON.parse(JSON.stringify(userUnJSONed)) ;
+
+  if (chosenUser._id === user._id) redirect("/") ;
+  
   const chosenUserFriends = await getFriends(chosenUser) ;
   const userTSX = (
     <div className="max-sm:flex max-sm:flex-col max-sm:items-center mt-2">

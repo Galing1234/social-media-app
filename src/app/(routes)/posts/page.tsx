@@ -4,6 +4,8 @@ import { PostType, UserType } from "@/types/types" ;
 import LikeComponent from "@/components/LikeComponent/LikeComponent";
 import { getServerSession } from "next-auth";
 import { options } from "@/app/api/auth/[...nextauth]/options";
+import Link from "next/link";
+import PostForm from "@/components/PostForm/PostForm";
 
 const PostsList = async () => {
   const posts: Array<PostType> = await getPosts() ;
@@ -16,16 +18,21 @@ const PostsList = async () => {
       <div key={post._id} className="border-black border-2 m-2 p-2 rounded shadow-lg cursor-pointer text-start">
         {
           userPost.profilePicture &&
-          <div className="flex">
-            <Image 
-              src={`${userPost.profilePicture}`} 
-              width={35} 
-              height={35} 
-              alt=""
-              priority
-              className="rounded-3xl"
-            />
-            <h1 className="no-underline mr-2">{userPost.name}</h1>
+          <div>
+            <Link
+              href={`${process.env.NEXT_BASE_URL_PATH}/users/${userPost._id}`}
+              className="flex"
+            >
+              <Image 
+                src={`${userPost.profilePicture}`} 
+                width={35} 
+                height={35} 
+                alt=""
+                priority
+                className="rounded-3xl"
+              />
+              <h1 className="no-underline mr-2">{userPost.name}</h1>
+            </Link>
           </div>
         }
 
@@ -46,6 +53,7 @@ const PostsList = async () => {
   
   return (
     <>
+      <PostForm userId={user._id} />
       {postsTSX}
     </>
   ) ;
