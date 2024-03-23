@@ -14,7 +14,10 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const data = await req.json() ;
-    const body = data.user ;
+    const body = data.user.user ;
+
+    console.log(body) ;
+    
 
     if (!body.name || !body.email || !body.image) {
       return NextResponse.json("All areas of input must be filled") ;
@@ -23,9 +26,9 @@ export async function POST(req: NextRequest) {
     const existingUser = await User.findOne({ email: body.email }).exec() ;
 
     if (existingUser) {
-      console.log("existing user:", existingUser)
       existingUser.name = body.name ;
       existingUser.profilePicture = body.image ;
+      existingUser.postsLiked = existingUser.postsLiked || [] ;
 
       await existingUser.save() ;
 
@@ -39,6 +42,7 @@ export async function POST(req: NextRequest) {
         role: body.role,
         friends: [],
         profilePicture: body.image,
+        postsLiked: [],
         likedNumber: 0
       }) ;
 

@@ -1,81 +1,97 @@
 "use client"
 
 import { useEffect, useState } from "react" ;
-import { AiOutlineLike } from "react-icons/ai" ;
+import { AiOutlineLike, AiFillLike } from "react-icons/ai" ;
 
 interface Props {
   userId: string ;
+  chosenUserId: string ;
   postId: string ;
 }
 
 const LikeComponent = ({
   userId,
+  chosenUserId,
   postId
 }: Props) => {
-  const [isClicking, setIsClicking] = useState<boolean>(false) ;
-  const [isLiked, setIsLiked] = useState<boolean>(false) ;
+  const [isLiking, setIsLiking] = useState<boolean>(false) ;
+  const [isUpdatingLikes, setIsUpdatingLikes] = useState(false) ;
 
   useEffect(() => {
-    if (!isClicking) return ;
-    
-    async function updateUser() {
-      if (isLiked) {
-        const res1 = await fetch(`/api/users/${userId}`, {
-          method: "POST",
-          body: JSON.stringify({
-            action: {
-              type: "remove_likes"
-            }
-          }),
-        }) ;
-        const res2 = await fetch(`/api/users/${postId}`, {
-          method: "POST",
-          body: JSON.stringify({
-            action: {
-              type: "remove_likes"
-            }
-          }),
-        }) ;
-        const data = await res1.json() ;
+    async function getUserLikes() {
+      const userRes = await fetch(`/api/users/${userId}`);
+      const userData = await userRes.json();
 
-        console.log(data) ;
-
-        setIsClicking(false) ;
-        setIsLiked(false) ;
-      } else {
-        const res1 = await fetch(`/api/users/${userId}`, {
-          method: "POST",
-          body: JSON.stringify({
-            action: {
-              type: "add_likes"
-            }
-          }),
-        }) ;
-        const res2 = await fetch(`/api/users/${postId}`, {
-          method: "POST",
-          body: JSON.stringify({
-            action: {
-              type: "remove_likes"
-            }
-          }),
-        }) ;
-        const data = await res1.json() ;
-        
-        console.log(data) ;
-
-        setIsClicking(false) ;
-        setIsLiked(true) ;
-      }
+      setIsLiking(userData.user.postsLiked.includes(postId)) ;
     }
 
-    updateUser() ;
-    
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userId, isClicking]) ;
+    getUserLikes() ;
+  }, [userId, postId]) ;
+
+  const handleLike = async () => {
+    if (isUpdatingLikes) return ;
+
+    setIsUpdatingLikes(true) ;
+
+    try {
+      const chosenUserUpdateUrl = `/api/users/${chosenUserId}` ;
+      const chosenUserBody = JSON.stringify({
+        action: {
+          type: isLiking ? "remove_likes" : "add_likes",
+        },
+        id: postId,
+      }) ;
+      const chosenUser = await fetch(chosenUserUpdateUrl, {
+        method: "POST",
+        body: chosenUserBody,
+      }) ;
+
+      if (!chosenUser.ok) {
+        throw new Error(`Failed to update like status: ${chosenUser.statusText}`) ;
+      }
+
+      const userUpdateUrl = `/api/users/${userId}` ;
+      const userBody = JSON.stringify({
+        action: {
+          type: isLiking ? "remove_likes_from_post" : "add_likes_to_post",
+        },
+        id: postId,
+      }) ;
+      const userRes = await fetch(userUpdateUrl, {
+        method: "POST",
+        body: userBody,
+      }) ;
+
+      if (!userRes.ok) {
+        throw new Error(`Failed to update like status: ${userRes.statusText}`) ;
+      }
+
+      const postUpdateUrl = `/api/posts/${postId}` ;
+      const postBody = JSON.stringify({
+        action: {
+          type: isLiking ? "remove_likes" : "add_likes",
+        },
+      }) ;
+      const postRes = await fetch(postUpdateUrl, {
+        method: "POST",
+        body: postBody,
+      }) ;
+
+      if (!postRes.ok) {
+        throw new Error(`Failed to update like status: ${postRes.statusText}`) ;
+      }
+
+      setIsLiking(!isLiking) ;
+    } catch (error) {
+      console.error("Error updating like status:", error) ;
+    } finally {
+      setIsUpdatingLikes(false) ;
+    }
+  } ;
   
   return (
-    <button onClick={() => setIsClicking(true)}>
-      <AiOutlineLike />
+    <button onClick={handleLike}>
+      { isLiking ? <AiFillLike /> : <AiOutlineLike /> }
     </button>
   ) ;
 }

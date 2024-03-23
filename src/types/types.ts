@@ -5,6 +5,7 @@ export type UserType = {
   profilePicture: HTMLImageElement, 
   friends: Array<string>,
   likedNumber: number, 
+  postsLiked: Array<string>,
   _id: string,
 } ;
 export type PostType = {

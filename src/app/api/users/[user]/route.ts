@@ -38,6 +38,18 @@ export async function POST(req: NextRequest, { params }: { params: { user: strin
         await user.save() ;
 
         return NextResponse.json({ user }) ;
+      case 'add_likes_to_post':
+        user.postsLiked.push(json.id) ;
+
+        await user.save() ;
+
+        return NextResponse.json({ user }) ;
+      case 'remove_likes_from_post':
+        user.postsLiked.splice(user.postsLiked.indexOf(json.id), 1) ;
+
+        await user.save() ;
+
+        return NextResponse.json({ user }) ;
       default: 
         return NextResponse.json({ user }) ;
     }

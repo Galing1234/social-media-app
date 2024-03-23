@@ -6,11 +6,8 @@ import axios from "axios" ;
 export async function postNewUser(sess: Session) {
   const { data: { user } } = await axios.post(
     `${process.env.NEXT_BASE_URL_PATH}/api/users`,
-    { sess },
-    { headers: { 'Content-Type': 'application/json' } },
-  );
-
-  return user ;
+    { user: sess },
+  ) ;
 }
 
 export async function findUser(userEmail: string) {

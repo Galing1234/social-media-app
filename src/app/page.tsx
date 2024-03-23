@@ -16,8 +16,8 @@ const HomePage = async () => {
   
   return (
     <div className={`${session ? null : "bg-black text-gray-100"} min-h-screen pt-2 text-center`}>
-      { user.name.length > 0 ?
-          <h1 className="text-4xl">ברוכים הבאים, {user.name}</h1>
+      { user && user.name ? 
+          <h1 className="text-4xl">ברוכים הבאים</h1>
         : 
         <>
           <h1 className="text-4xl">ברוכים הבאים לבומרנג</h1>

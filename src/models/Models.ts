@@ -1,10 +1,12 @@
 import mongoose, { Schema } from 'mongoose';
 import { CommentType, PostType, UserType } from '@/types/types' ;
 
-const mongoPostsUri = process.env.MONGODB_POSTS_URI ;
-const mongoUsersUri = process.env.MONGODB_USERS_URI ;
+const mongoPostsUri = process.env.MONGODB_POSTS_URI! ;
+const mongoUsersUri = process.env.MONGODB_USERS_URI! ;
 
 if (!mongoPostsUri || !mongoUsersUri) {
+  console.log('users:', mongoPostsUri, 'posts', mongoUsersUri) ;
+  
   throw new Error('Missing required environment variables: MONGODB_POSTS_URI and MONGODB_USERS_URI') ;
 }
 
@@ -29,6 +31,7 @@ const userSchema = new Schema<UserType>({
   profilePicture: String,
   friends: [String],
   likedNumber: Number,
+  postsLiked: [String]
 }) ;
 
 // Create models specific to their connections for isolation
