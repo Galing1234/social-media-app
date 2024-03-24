@@ -3,7 +3,11 @@ import { redirect } from "next/navigation" ;
 
 export default withAuth((req: NextRequestWithAuth) => {
   if (
-    req.nextUrl.pathname.startsWith('/users') && 
+    ( 
+      req.nextUrl.pathname.startsWith('/users') ||
+      req.nextUrl.pathname.startsWith('/posts') ||
+      req.nextUrl.pathname.startsWith('/profile') 
+    ) && 
     !(
       req.nextauth.token?.role === 'User' || 
       req.nextauth.token?.role === 'Admin'
@@ -15,6 +19,6 @@ export default withAuth((req: NextRequestWithAuth) => {
 
 export const config = {
   matcher: [
-    '/users/', '/users/(.*)'
+    '/users/', '/users/(.*)', '/posts/', '/posts/(.*)', '/profile/', '/profile/(.*)'
   ]
 } ;
