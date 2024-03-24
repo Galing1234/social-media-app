@@ -1,5 +1,5 @@
 import { Session } from "next-auth" ;
-import { User } from "@/models/Models" ;
+import { Post, User } from "@/models/Models" ;
 import { UserType } from "@/types/types" ;
 import axios from "axios" ;
 
@@ -18,10 +18,7 @@ export async function findUser(userEmail: string) {
 
 export async function findUserById(userId: string) {
   const user = await User.findOne({ _id: userId }) ;
-
-  console.log(userId) ;
   
-
   return user ;
 }
 
@@ -60,4 +57,10 @@ export async function getPosts() {
   const data = await res.json() ;
 
   return data.res ;
+}
+
+export async function findPostById(postId: string) {
+  const post = await Post.findOne({ _id: postId }) ;
+
+  return post ;
 }

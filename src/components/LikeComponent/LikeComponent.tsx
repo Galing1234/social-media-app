@@ -14,13 +14,13 @@ const LikeComponent = ({
   chosenUserId,
   postId
 }: Props) => {
-  const [isLiking, setIsLiking] = useState<boolean>(false) ;
+  const [isLiking, setIsLiking] = useState<boolean | null>(null) ;
   const [isUpdatingLikes, setIsUpdatingLikes] = useState(false) ;
 
   useEffect(() => {
     async function getUserLikes() {
-      const userRes = await fetch(`/api/users/${userId}`);
-      const userData = await userRes.json();
+      const userRes = await fetch(`/api/users/${userId}`) ;
+      const userData = await userRes.json() ;
 
       setIsLiking(userData.user.postsLiked.includes(postId)) ;
     }
@@ -30,6 +30,7 @@ const LikeComponent = ({
 
   const handleLike = async () => {
     if (isUpdatingLikes) return ;
+    if (isLiking === null) return ;
 
     setIsUpdatingLikes(true) ;
 

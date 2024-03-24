@@ -1,14 +1,16 @@
 import Image from "next/image" ;
+import Link from "next/link" ;
 import { getPosts, findUserById, findUser } from "@/lib/utils" ;
 import { PostType, UserType } from "@/types/types" ;
 import LikeComponent from "@/components/LikeComponent/LikeComponent";
 import { getServerSession } from "next-auth";
 import { options } from "@/app/api/auth/[...nextauth]/options";
-import Link from "next/link";
 import PostForm from "@/components/PostForm/PostForm";
+import CommentsComponent from "@/components/CommentsComponent/CommentsComponent";
 
 const PostsList = async () => {
-  const posts: Array<PostType> = await getPosts() ;
+  const postsUnReversed: Array<PostType> = await getPosts() ;
+  const posts = postsUnReversed.reverse() ;
   const session = await getServerSession(options) ;
   const user = await findUser(session.user.email) as UserType ;
   const postsTSX = posts.map(async (post: PostType) => {
@@ -36,17 +38,24 @@ const PostsList = async () => {
           </div>
         }
 
-        <h1 className="no-underline mb-0 text-3xl">{post.title}</h1>
-        <h2 className="mt-0">{post.content}</h2>
+        <Link
+          href={`${process.env.NEXT_BASE_URL_PATH}/posts/${post._id}`}
+        >
+          <h1 className="no-underline mb-0 text-3xl">{post.title}</h1>
+          <h2 className="mt-0">{post.content}</h2>
 
-        <div className="flex items-center text-xl">
-          <LikeComponent 
-            userId={user._id}
-            chosenUserId={userPost._id}
-            postId={post._id}
-           />
-          <p className="mr-1">{post.likes}</p>
-        </div>
+          <div className="flex items-center text-xl">
+            <CommentsComponent />
+            <p className="mr-1 ml-2">{post.comments.length}</p>
+
+            <LikeComponent 
+              userId={user._id}
+              chosenUserId={userPost._id}
+              postId={post._id}
+            />
+            <p className="mr-1">{post.likes}</p>
+          </div>
+        </Link>
       </div>
     ) ;
   }) ;

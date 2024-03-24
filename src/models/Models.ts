@@ -22,7 +22,7 @@ const postSchema = new Schema<PostType>({
   content: String,
   likes: Number,
   comments: Array<CommentType>,
-}) ;
+}, { timestamps: true }) ;
 
 const userSchema = new Schema<UserType>({
   name: String,
@@ -32,10 +32,9 @@ const userSchema = new Schema<UserType>({
   friends: [String],
   likedNumber: Number,
   postsLiked: [String]
-}) ;
+}, { timestamps: true }) ;
 
-// Create models specific to their connections for isolation
-const Post = postsConnection.model('Post', postSchema);
-const User = usersConnection.model('User', userSchema);
+const Post = postsConnection.model('Post', postSchema) ;
+const User = usersConnection.model('User', userSchema) ;
 
-export { Post, User };
+export { Post, User } ;
