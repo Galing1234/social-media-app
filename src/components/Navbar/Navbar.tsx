@@ -10,7 +10,7 @@ const Navbar = async () => {
   return (
     <nav className="bg-blue-900 h-[77px]">
       <header className="flex jusfify-between items-center">
-        <Menu />
+        { session && <Menu /> }
         
         <div className="flex items-center flex-1 max-sm:hidden"> 
           <Image
