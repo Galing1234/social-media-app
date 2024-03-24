@@ -1,38 +1,44 @@
 "use client"
 
+import { PostType } from "@/types/types";
 import { useEffect, useState } from "react" ;
 import { AiOutlineLike, AiFillLike } from "react-icons/ai" ;
 
 interface Props {
   userId: string ;
   chosenUserId: string ;
-  postId: string ;
+  post: PostType ;
 }
 
 const LikeComponent = ({
   userId,
   chosenUserId,
-  postId
+  post
 }: Props) => {
   const [isLiking, setIsLiking] = useState<boolean | null>(null) ;
   const [isUpdatingLikes, setIsUpdatingLikes] = useState(false) ;
+  const [postLikes, setPostLikes] = useState<number>(post.likes) ;
 
   useEffect(() => {
     async function getUserLikes() {
       const userRes = await fetch(`/api/users/${userId}`) ;
       const userData = await userRes.json() ;
 
-      setIsLiking(userData.user.postsLiked.includes(postId)) ;
+      setIsLiking(userData.user.postsLiked.includes(post._id)) ;
     }
 
     getUserLikes() ;
-  }, [userId, postId]) ;
+  }, [userId, post._id]) ;
 
   const handleLike = async () => {
     if (isUpdatingLikes) return ;
     if (isLiking === null) return ;
 
     setIsUpdatingLikes(true) ;
+    setPostLikes(prevPostLikes => {
+      return isLiking ? prevPostLikes - 1 : prevPostLikes + 1
+    }) ;
+    setIsLiking(!isLiking) ;
 
     try {
       const chosenUserUpdateUrl = `/api/users/${chosenUserId}` ;
@@ -40,7 +46,7 @@ const LikeComponent = ({
         action: {
           type: isLiking ? "remove_likes" : "add_likes",
         },
-        id: postId,
+        id: post._id,
       }) ;
       const chosenUser = await fetch(chosenUserUpdateUrl, {
         method: "POST",
@@ -56,7 +62,7 @@ const LikeComponent = ({
         action: {
           type: isLiking ? "remove_likes_from_post" : "add_likes_to_post",
         },
-        id: postId,
+        id: post._id,
       }) ;
       const userRes = await fetch(userUpdateUrl, {
         method: "POST",
@@ -67,7 +73,7 @@ const LikeComponent = ({
         throw new Error(`Failed to update like status: ${userRes.statusText}`) ;
       }
 
-      const postUpdateUrl = `/api/posts/${postId}` ;
+      const postUpdateUrl = `/api/posts/${post._id}` ;
       const postBody = JSON.stringify({
         action: {
           type: isLiking ? "remove_likes" : "add_likes",
@@ -81,8 +87,6 @@ const LikeComponent = ({
       if (!postRes.ok) {
         throw new Error(`Failed to update like status: ${postRes.statusText}`) ;
       }
-
-      setIsLiking(!isLiking) ;
     } catch (error) {
       console.error("Error updating like status:", error) ;
     } finally {
@@ -91,9 +95,12 @@ const LikeComponent = ({
   } ;
   
   return (
-    <button onClick={handleLike}>
-      { isLiking ? <AiFillLike /> : <AiOutlineLike /> }
-    </button>
+    <>
+      <button onClick={handleLike}>
+        { isLiking ? <AiFillLike /> : <AiOutlineLike /> }
+      </button>
+      <p className="mr-1">{postLikes}</p>
+    </>
   ) ;
 }
 

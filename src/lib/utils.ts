@@ -52,9 +52,14 @@ export async function getUser(userId: string) {
   return data.user ;
 } 
 
-export async function getPosts() {
-  const res = await fetch(`${process.env.NEXT_BASE_URL_PATH}/api/posts`, { next: { revalidate: 1 } } ) ;
+export async function getPosts(number?: number) {
+  const res = await fetch(`${process.env.NEXT_BASE_URL_PATH}/api/posts?${number !== undefined && `posts=${number}`}`, { next: { revalidate: 1 } } ) ;
+
+  console.log(`${process.env.NEXT_BASE_URL_PATH}/api/posts?${number !== undefined && `posts=${number}`}`) ;
+  
   const data = await res.json() ;
+
+  console.log('data:', data) ;
 
   return data.res ;
 }

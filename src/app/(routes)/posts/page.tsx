@@ -7,42 +7,49 @@ import { getServerSession } from "next-auth";
 import { options } from "@/app/api/auth/[...nextauth]/options";
 import PostForm from "@/components/PostForm/PostForm";
 import CommentsComponent from "@/components/CommentsComponent/CommentsComponent";
+import { FaCrown } from "react-icons/fa" ;
+import { Post } from "@/models/Models";
 
-const PostsList = async () => {
-  const postsUnReversed: Array<PostType> = await getPosts() ;
-  const posts = postsUnReversed.reverse() ;
+const PostsList = async ({ 
+  searchParams 
+}: {
+  searchParams: { posts: string }
+}) => {
+  const postsLength = await Post.countDocuments() ;
+  const posts: Array<PostType> = await getPosts(Number(searchParams.posts) || 0) ;
   const session = await getServerSession(options) ;
   const user = await findUser(session.user.email) as UserType ;
   const postsTSX = posts.map(async (post: PostType) => {
     const userPost = await findUserById(post.user) as UserType ;
 
     return (
-      <div key={post._id} className="border-black border-2 m-2 p-2 rounded shadow-lg cursor-pointer text-start">
-        {
-          userPost.profilePicture &&
-          <div>
-            <Link
-              href={`${process.env.NEXT_BASE_URL_PATH}/users/${userPost._id}`}
-              className="flex"
-            >
-              <Image 
-                src={`${userPost.profilePicture}`} 
-                width={35} 
-                height={35} 
-                alt=""
-                priority
-                className="rounded-3xl"
-              />
-              <h1 className="no-underline mr-2">{userPost.name}</h1>
-            </Link>
-          </div>
-        }
+      <div key={post._id} className="border-black border-2 mx-2 mb-2 p-2 rounded shadow-lg cursor-pointer text-start">
+        <div>
+          <Link
+            href={`${process.env.NEXT_BASE_URL_PATH}/users/${userPost._id}`}
+            className="flex items-center"
+          >
+            <Image 
+              src={`${userPost.profilePicture}`} 
+              width={35} 
+              height={35} 
+              alt=""
+              priority
+              className="rounded-3xl"
+            />
+            <h1 className="no-underline mr-2 whitespace-nowrap overflow-hidden text-ellipsis">{userPost.name}</h1>
+
+            { userPost.role === 'Admin' && <FaCrown 
+              className="mr-2"
+            /> }
+          </Link>
+        </div>
 
         <Link
           href={`${process.env.NEXT_BASE_URL_PATH}/posts/${post._id}`}
         >
-          <h1 className="no-underline mb-0 text-3xl">{post.title}</h1>
-          <h2 className="mt-0">{post.content}</h2>
+          <h1 className="no-underline mb-0 text-3xl whitespace-nowrap overflow-hidden text-ellipsis">{post.title}</h1>
+          <h2 className="mt-0 whitespace-nowrap overflow-hidden text-ellipsis">{post.content}</h2>
         </Link>
         
         <div className="flex items-center text-xl">
@@ -50,20 +57,29 @@ const PostsList = async () => {
           <p className="mr-1 ml-2">{post.comments.length}</p>
 
           <LikeComponent 
-            userId={user._id}
-            chosenUserId={userPost._id}
-            postId={post._id}
+            userId={user._id.toString()}
+            chosenUserId={userPost._id.toString()}
+            post={post}
           />
-          <p className="mr-1">{post.likes}</p>
         </div>
       </div>
     ) ;
   }) ;
-  
+
   return (
     <>
-      <PostForm userId={user._id} />
-      {postsTSX}
+      <PostForm userId={user._id.toString()} />
+
+      <div className="mt-2">
+        {postsTSX}
+
+        { Number(searchParams.posts) < postsLength && <div className="flex justify-center w-full">
+          <Link
+            href={`${process.env.NEXT_BASE_URL_PATH}/posts?posts=${Number(searchParams.posts) + 10}`}
+            className="border-black border-2 rounded text-gray-100 bg-orange-500 px-2 shadow-sm shadow-black"
+          >ראו עוד</Link>
+        </div> }
+      </div>
     </>
   ) ;
 }

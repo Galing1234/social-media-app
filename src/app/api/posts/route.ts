@@ -1,11 +1,16 @@
 import { NextRequest, NextResponse } from "next/server" ;
 import { Post } from "@/models/Models" ;
 
-export async function GET() {
-  try {
-    const res = await Post.find({}) ;
+export async function GET(req: NextRequest) {
+  const url = new URL(req.url) ;
 
-    return NextResponse.json({ res }) ;
+  console.log(Number(url.searchParams.get("posts")) === 0) ;
+
+  try {
+    const sortedRes = await Post.find({}).sort({ _id: -1 }) ;
+    const res = sortedRes.slice(0, Number(url.searchParams.get("posts"))) ;
+
+    return NextResponse.json({ res: Number(url.searchParams.get("posts")) === 0 ? [] : res }) ;
   } catch (error: any) {
     return NextResponse.json({ error: error.message }) ;
   }
