@@ -30,26 +30,26 @@ const Post = async ({
         <h2>{post.content}</h2>
       </div>
 
-      <div className="">
+      <div>
         <h1 className="no-underline text-3xl pb-3 text-center">תגובות</h1>
 
         <CommentsForm userId={user._id} postId={post._id} />
 
         {
           post.comments.reverse().map(async (comment: CommentType) => {
-            const user = await findUserById(comment.user) as UserType ;
+            const userComment = await findUserById(comment.user) as UserType ;
 
             return (
               <div key={comment._id} className="border-t-black border-b-black border-2 my-2 p-2">
                 <div className="flex items-center">
                   <Image
                     alt=''
-                    src={user.profilePicture}
+                    src={userComment.profilePicture}
                     width={25}
                     height={25}
                     className="rounded-[50%] ml-2"
                   />
-                  <h2>{user.name}</h2>
+                  <h2>{userComment.name}</h2>
                 </div>
 
                 <h1 className="no-underline">{comment.title}</h1>
