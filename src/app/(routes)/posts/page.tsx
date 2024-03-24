@@ -43,19 +43,19 @@ const PostsList = async () => {
         >
           <h1 className="no-underline mb-0 text-3xl">{post.title}</h1>
           <h2 className="mt-0">{post.content}</h2>
-
-          <div className="flex items-center text-xl">
-            <CommentsComponent />
-            <p className="mr-1 ml-2">{post.comments.length}</p>
-
-            <LikeComponent 
-              userId={user._id}
-              chosenUserId={userPost._id}
-              postId={post._id}
-            />
-            <p className="mr-1">{post.likes}</p>
-          </div>
         </Link>
+        
+        <div className="flex items-center text-xl">
+          <CommentsComponent />
+          <p className="mr-1 ml-2">{post.comments.length}</p>
+
+          <LikeComponent 
+            userId={user._id}
+            chosenUserId={userPost._id}
+            postId={post._id}
+          />
+          <p className="mr-1">{post.likes}</p>
+        </div>
       </div>
     ) ;
   }) ;
