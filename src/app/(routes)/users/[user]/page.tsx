@@ -13,8 +13,8 @@ const UserPage = async ({ params }: { params: { user: string } }) => {
   const session = await getServerSession(options) ;
   const userUnJSONed = await findUser(session.user.email) as UserType ;
   const user: UserType = JSON.parse(JSON.stringify(userUnJSONed)) ;
-
-  if (chosenUser._id === user._id) redirect("/") ;
+  
+  if (chosenUser._id === user._id) redirect("/profile") ;
   
   const chosenUserFriends = await getFriends(chosenUser) ;
   const userTSX = (
@@ -35,9 +35,11 @@ const UserPage = async ({ params }: { params: { user: string } }) => {
         <p className="text-2xl">{chosenUser.likedNumber}</p>
       </div>
 
-      { user.friends.includes(chosenUser._id)
+      { user.friends.includes(chosenUser._id) && chosenUser.friends.includes(user._id)
         ? <button className="text-xl bg-gray-200 rounded px-2 mt-2 shadow-md" disabled>כבר חבר</button> 
-        : <AddFriendButton userId={user._id} chosenUser={chosenUser} /> 
+        : user.friends.includes(chosenUser._id) 
+          ? <button className="text-xl bg-gray-200 rounded px-2 mt-2 shadow-md" disabled>נשלחה בקשת חברות</button>
+          : <AddFriendButton userId={user._id} chosenUser={chosenUser} /> 
       }
 
       { chosenUserFriends.length > 0 && <h1 className="mt-5 text-5xl">חברים</h1> }      
@@ -47,7 +49,7 @@ const UserPage = async ({ params }: { params: { user: string } }) => {
           return (
             <div key={friend?._id} className="mt-2 cursor-pointer">
               <Link
-                href={friend?._id == user._id ? '/' : `/users/${friend?._id}`}
+                href={friend?._id == user._id ? '/profile' : `/users/${friend?._id}`}
                 className="flex max-sm:justify-center items-center"
               >
                 <Image 

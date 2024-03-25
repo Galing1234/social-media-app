@@ -9,7 +9,7 @@ const Sidebar = ({ onClick }: { onClick: React.Dispatch<SetStateAction<boolean>>
         <IoIosClose onClick={() => onClick(false)} size={75} className="cursor-pointer mb-3" />
         <Link
           href="/posts?posts=10"
-          className="text-3xl px-5 mb-1"
+          className="text-3xl px-5 mb-2"
           onClick={() => onClick(false)}
         >פוסטים</Link>
         <Link

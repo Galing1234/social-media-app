@@ -21,7 +21,7 @@ const Post = async ({
     <div className="m-2">
       <div className="border-b-black border-b-2 pb-2">
         <Link
-          href={`${process.env.NEXT_BASE_URL_PATH}/users/${user._id}`}
+          href={commentUser._id === user._id ? '/profile' : `/users/${user._id}`}
         >
           <div className="flex items-center text-base">
             <Image

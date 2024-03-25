@@ -8,7 +8,7 @@ import { options } from "@/app/api/auth/[...nextauth]/options";
 import PostForm from "@/components/PostForm/PostForm";
 import CommentsComponent from "@/components/CommentsComponent/CommentsComponent";
 import { FaCrown } from "react-icons/fa" ;
-import { Post } from "@/models/Models";
+import { Post } from "@/models/Models" ;
 
 const PostsList = async ({ 
   searchParams 
@@ -26,7 +26,7 @@ const PostsList = async ({
       <div key={post._id} className="border-black border-2 mx-2 mb-2 p-2 rounded shadow-lg cursor-pointer text-start">
         <div>
           <Link
-            href={`${process.env.NEXT_BASE_URL_PATH}/users/${userPost._id}`}
+            href={userPost._id == user._id ? '/profile' : `/users/${userPost._id}`}
             className="flex items-center"
           >
             <Image 

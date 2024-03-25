@@ -2,7 +2,7 @@ import { getServerSession } from "next-auth" ;
 import { options } from "./api/auth/[...nextauth]/options" ;
 import { findUser, postNewUser } from "@/lib/utils" ;
 import Link from "next/link" ;
-import { UserType } from "@/types/types";
+import { UserType } from "@/types/types" ;
 
 const HomePage = async () => {
   const session = await getServerSession(options) ;
